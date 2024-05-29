@@ -4,6 +4,10 @@ ARG NOVNC_VERSION="1.4.0"
 ARG OPENWRT_VERSION="23.05.3"
 ARG VERSION_ARG="0.1"
 
+RUN mkdir -p /tmp/noVNC-${NOVNC_VERSION}
+ADD https://github.com/novnc/noVNC/archive/refs/tags/v${NOVNC_VERSION}.tar.gz /tmp/novnc.tar.gz
+ADD https://github.com/bugy/script-server/releases/download/1.18.0/script-server.zip /tmp/noVNC-${NOVNC_VERSION}/script-server.zip
+
 RUN apk add --no-cache \
         supervisor \
         bash \
@@ -19,11 +23,9 @@ RUN apk add --no-cache \
         uuidgen \
         caddy \
     && mkdir -p /usr/share/novnc \
-    && wget https://github.com/novnc/noVNC/archive/refs/tags/v${NOVNC_VERSION}.tar.gz -O /tmp/novnc.tar.gz -q \
     && tar -xf /tmp/novnc.tar.gz -C /tmp/ \
     && cd /tmp/noVNC-${NOVNC_VERSION}\
     && mv app core vendor package.json *.html /usr/share/novnc \
-    && wget https://github.com/bugy/script-server/releases/download/1.18.0/script-server.zip \
     && unzip -o script-server.zip -d /usr/share/script-server \
     && python3 -m venv /var/lib/script-server-env \
     && source /var/lib/script-server-env/bin/activate \
